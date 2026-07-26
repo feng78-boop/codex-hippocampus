@@ -147,3 +147,60 @@ MIT — 开源，自由使用、修改、分发。
   <i>记忆不是被删除的，而是迷路了。<br>
   我们做的事，就是为每一条记忆留下足够多的路标。</i>
 </p>
+
+---
+
+## 安装与排障
+
+### 依赖
+
+```bash
+pip install fastembed numpy
+```
+
+> 原方案使用 `sentence-transformers`，在 macOS Apple Silicon + 沙箱环境下因 PyTorch/OpenMP 冲突会导致 segfault。已切换为 `fastembed`（ONNX 运行时），更轻量、无冲突、兼容性更好。
+
+### 常见问题
+
+**Q: `PermissionError: '/Users/xxx/.cache/huggingface'`**
+
+A: 沙箱环境可能限制 `~/.cache` 写入。设置环境变量解决：
+
+```bash
+export HF_HOME=/path/to/writable/dir
+```
+
+也可写到项目目录：
+```bash
+export HF_HOME=$(pwd)/.hf_cache
+```
+
+**Q: `OMP: Error #15: libomp.dylib already initialized`**
+
+A: Apple Silicon 上 PyTorch 与系统 OpenMP 冲突。如使用 `sentence-transformers`，设置：
+```bash
+export KMP_DUPLICATE_LIB_OK=TRUE
+```
+但推荐直接使用 `fastembed`（已在 requirements.txt 中）。
+
+**Q: 首次运行很慢？**
+
+A: 嵌入模型 `BAAI/bge-small-en-v1.5` 首次需下载（~130MB）。之后缓存到 `HF_HOME`，后续运行秒级响应。
+
+**Q: 如何切换全局/项目隔离？**
+
+A: 默认全局（`~/.codex/hippocampus/global/`）。需要项目隔离时设置：
+```bash
+export HIPPOCAMPUS_SCOPE=project
+```
+
+**Q: 安装 Skill 到 Codex**
+
+A:
+```bash
+cp -r codex-hippocampus ~/.codex/skills/codex-hippocampus
+```
+Install from GitHub:
+```bash
+git clone https://github.com/feng78-boop/codex-hippocampus.git ~/.codex/skills/codex-hippocampus
+```

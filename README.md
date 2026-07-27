@@ -55,41 +55,78 @@
 
 ## 快速开始
 
-### 1. 安装
+### 1. 安装依赖
 
 ```bash
-cd hippocampus
 pip install fastembed numpy
 ```
 
-无需外部 API Key。嵌入模型 `all-MiniLM-L6-v2` (~80MB) 完全本地运行。
+首次运行时自动下载嵌入模型 (~130MB)，仅此一次。
 
-### 2. 编码一段记忆
+### 2. 选择记忆范围（重要！）
+
+Hippocampus 默认**全局模式**——所有项目共享同一份记忆。
+
+| 你的环境 | 需要做什么 |
+|---|---|
+| 普通终端 (Linux/macOS/Windows) | 无需配置，直接使用 |
+| Codex 沙箱 | 配置 `HIPPOCAMPUS_HOME` 环境变量（见下方） |
+
+#### 全局记忆（默认，推荐）
+
+终端用户无需任何配置。Codex 沙箱用户需在 `~/.codex/config.toml` 的 `[shell_environment_policy.set]` 段加一行：
+
+```toml
+[shell_environment_policy.set]
+HIPPOCAMPUS_HOME = "C:\\Users\\你的用户名\\Documents\\hippocampus-data"
+```
+
+> 原因：沙箱默认不允许写入 `~/.codex/hippocampus/`，设置 `HIPPOCAMPUS_HOME` 指向 workspace 即可。
+
+#### 项目局部记忆
 
 ```bash
-python3 -m hippocampus.engine consolidate \
+# Linux/macOS
+export HIPPOCAMPUS_SCOPE=local
+
+# Windows PowerShell
+$env:HIPPOCAMPUS_SCOPE = "local"
+```
+
+数据存储在项目根目录 `.hippocampus/` 下，不同项目互不干扰。
+
+#### 交互式安装向导
+
+```bash
+python setup.py
+```
+
+### 3. 编码记忆
+
+```bash
+python -m hippocampus.engine consolidate \
   "用户偏好用 Rust 写系统级代码，Python 写工具脚本" \
   --emotion 0.3 \
   --topic "编码偏好" \
   --tags rust python
 ```
 
-### 3. 检索相关记忆
+### 4. 检索记忆
 
 ```bash
-python3 -m hippocampus.engine retrieve "写什么语言好" --top 5
+python -m hippocampus.engine retrieve "写什么语言好" --top 5
 ```
 
-### 4. 生成会话上下文
+### 5. 生成会话上下文
 
 ```bash
-python3 -m hippocampus.engine context "代码重构"
+python -m hippocampus.engine context "代码重构"
 ```
 
-### 5. 查看统计
+### 6. 查看统计
 
 ```bash
-python3 -m hippocampus.engine stats
+python -m hippocampus.engine stats
 ```
 
 ---

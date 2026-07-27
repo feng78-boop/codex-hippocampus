@@ -212,11 +212,14 @@ class Hippocampus:
                 data_dir = custom_home
             else:
                 scope = os.environ.get("HIPPOCAMPUS_SCOPE", "global")
-                base = os.path.join(os.path.expanduser("~"), ".codex", "hippocampus")
-                if scope == "project":
+                if scope == "local":
+                    data_dir = os.path.join(os.getcwd(), ".hippocampus")
+                elif scope == "project":
+                    base = os.path.join(os.path.expanduser("~"), ".codex", "hippocampus")
                     cwd_hash = str(abs(hash(os.getcwd())))[:8]
                     data_dir = os.path.join(base, "projects", cwd_hash)
                 else:
+                    base = os.path.join(os.path.expanduser("~"), ".codex", "hippocampus")
                     data_dir = os.path.join(base, "global")
 
         self.data_dir = Path(data_dir)
@@ -377,24 +380,28 @@ class Hippocampus:
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(description="Codex-Hippocampus: Brain-like Memory")
+    parser = argparse.ArgumentParser(
+        description="Codex-Hippocampus: Brain-like Memory",
+        epilog="SCOPE CONTROL:\n  HIPPOCAMPUS_SCOPE=global    ~/.codex/hippocampus/global/ (default, all projects)\n  HIPPOCAMPUS_SCOPE=local     ./.hippocampus/ (this project only)\n  HIPPOCAMPUS_HOME=/path      custom directory\n\nRun 'python setup.py' for interactive configuration.",
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     sub = parser.add_subparsers(dest="command")
 
-    p_cons = sub.add_parser("consolidate")
+    p_cons = sub.add_parser("consolidate", help="Encode a new memory fragment")
     p_cons.add_argument("content")
     p_cons.add_argument("--emotion", type=float, default=0.5)
     p_cons.add_argument("--topic", default="")
     p_cons.add_argument("--tags", nargs="*", default=[])
 
-    p_ret = sub.add_parser("retrieve")
+    p_ret = sub.add_parser("retrieve", help="Search memories by semantic similarity")
     p_ret.add_argument("query")
     p_ret.add_argument("--top", type=int, default=5)
 
-    p_ctx = sub.add_parser("context")
+    p_ctx = sub.add_parser("context", help="Generate session context from memories")
     p_ctx.add_argument("topic")
 
-    sub.add_parser("maintain")
-    sub.add_parser("stats")
+    sub.add_parser("maintain", help="Daily maintenance: consolidate, decay, summarize")
+    sub.add_parser("stats", help="Show memory statistics by layer")
 
     args = parser.parse_args()
     hp = Hippocampus()

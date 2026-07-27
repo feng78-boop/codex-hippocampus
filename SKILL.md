@@ -86,6 +86,22 @@ python3 -m hippocampus.engine stats
 ```bash
 pip install fastembed numpy
 ```
+### Memory Scope
+
+Choose where your memories live:
+
+| Scope | Command | Storage |
+|---|---|---|
+| **Global** (default) | `export HIPPOCAMPUS_SCOPE=global` | `~/.codex/hippocampus/global/` |
+| **Local** | `export HIPPOCAMPUS_SCOPE=local` | `./.hippocampus/` |
+| **Custom** | `export HIPPOCAMPUS_HOME=/path` | any writable directory |
+
+Run the interactive setup to choose:
+
+```bash
+python setup.py
+```
+
 
 ### Sandbox / Custom Data Directory
 

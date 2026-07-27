@@ -59,7 +59,7 @@
 
 ```bash
 cd hippocampus
-pip install sentence-transformers numpy
+pip install fastembed numpy
 ```
 
 无需外部 API Key。嵌入模型 `all-MiniLM-L6-v2` (~80MB) 完全本地运行。
@@ -67,7 +67,7 @@ pip install sentence-transformers numpy
 ### 2. 编码一段记忆
 
 ```bash
-python3 -m hippocampus.hippocampus.engine consolidate \
+python3 -m hippocampus.engine consolidate \
   "用户偏好用 Rust 写系统级代码，Python 写工具脚本" \
   --emotion 0.3 \
   --topic "编码偏好" \
@@ -77,19 +77,19 @@ python3 -m hippocampus.hippocampus.engine consolidate \
 ### 3. 检索相关记忆
 
 ```bash
-python3 -m hippocampus.hippocampus.engine retrieve "写什么语言好" --top 5
+python3 -m hippocampus.engine retrieve "写什么语言好" --top 5
 ```
 
 ### 4. 生成会话上下文
 
 ```bash
-python3 -m hippocampus.hippocampus.engine context "代码重构"
+python3 -m hippocampus.engine context "代码重构"
 ```
 
 ### 5. 查看统计
 
 ```bash
-python3 -m hippocampus.hippocampus.engine stats
+python3 -m hippocampus.engine stats
 ```
 
 ---

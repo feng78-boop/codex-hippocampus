@@ -40,7 +40,7 @@ Use the `context` command at the start of each new session to inject relevant me
 
 ### consolidate — Create a memory
 ```
-python3 -m hippocampus.hippocampus.engine consolidate "<memory content>" --emotion <0-1> --topic "<topic>" --tags tag1 tag2
+python3 -m hippocampus.engine consolidate "<memory content>" --emotion <0-1> --topic "<topic>" --tags tag1 tag2
 ```
 - `--emotion`: 0.0 (neutral) to 1.0 (highly emotional). Memories with >0.8 go to permastore.
 - `--topic`: the subject area
@@ -48,23 +48,23 @@ python3 -m hippocampus.hippocampus.engine consolidate "<memory content>" --emoti
 
 ### retrieve — Search memories
 ```
-python3 -m hippocampus.hippocampus.engine retrieve "<query>" --top 5
+python3 -m hippocampus.engine retrieve "<query>" --top 5
 ```
 
 ### context — Generate session context injection
 ```
-python3 -m hippocampus.hippocampus.engine context "<current topic>"
+python3 -m hippocampus.engine context "<current topic>"
 ```
 Run this at session start. Injects relevant memories into the conversation.
 
 ### maintain — Run daily maintenance (consolidation, forgetting)
 ```
-python3 -m hippocampus.hippocampus.engine maintain
+python3 -m hippocampus.engine maintain
 ```
 
 ### stats — View memory statistics
 ```
-python3 -m hippocampus.hippocampus.engine stats
+python3 -m hippocampus.engine stats
 ```
 
 ## Session Protocol
@@ -84,7 +84,17 @@ python3 -m hippocampus.hippocampus.engine stats
 ## Installation
 
 ```bash
-pip install sentence-transformers numpy
+pip install fastembed numpy
 ```
+
+### Sandbox / Custom Data Directory
+
+Set `HIPPOCAMPUS_HOME` to override the default data storage path:
+
+```bash
+export HIPPOCAMPUS_HOME=/path/to/writable/dir   # Linux/macOS
+set HIPPOCAMPUS_HOME=C:\path\to\writable\dir   # Windows
+```
+
 
 No external API keys needed. All embeddings run locally via `all-MiniLM-L6-v2` (~80MB model).

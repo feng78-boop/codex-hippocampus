@@ -207,13 +207,17 @@ class Hippocampus:
 
     def __init__(self, data_dir: str = None):
         if data_dir is None:
-            scope = os.environ.get("HIPPOCAMPUS_SCOPE", "global")
-            base = os.path.join(os.path.expanduser("~"), ".codex", "hippocampus")
-            if scope == "project":
-                cwd_hash = str(abs(hash(os.getcwd())))[:8]
-                data_dir = os.path.join(base, "projects", cwd_hash)
+            custom_home = os.environ.get("HIPPOCAMPUS_HOME")
+            if custom_home:
+                data_dir = custom_home
             else:
-                data_dir = os.path.join(base, "global")
+                scope = os.environ.get("HIPPOCAMPUS_SCOPE", "global")
+                base = os.path.join(os.path.expanduser("~"), ".codex", "hippocampus")
+                if scope == "project":
+                    cwd_hash = str(abs(hash(os.getcwd())))[:8]
+                    data_dir = os.path.join(base, "projects", cwd_hash)
+                else:
+                    data_dir = os.path.join(base, "global")
 
         self.data_dir = Path(data_dir)
         self.data_dir.mkdir(parents=True, exist_ok=True)
@@ -350,11 +354,11 @@ class Hippocampus:
         if not memories:
             return ""
 
-        lines = ["[海马体 - 相关记忆:]"]
+        lines = ["[Hippocampus - Related memories:]"]
         for mem in memories:
-            emoji = {"active": "💡", "dormant": "🌙", "permastore": "💎"}.get(mem.layer, "")
+            marker = {"active": "[A]", "dormant": "[D]", "permastore": "[P]"}.get(mem.layer, "[?]")
             truncated = mem.content[:150].replace("\n", " ")
-            lines.append(f"  {emoji} [{mem.memory_id}] {truncated}")
+            lines.append(f"  {marker} [{mem.memory_id}] {truncated}")
 
         result = "\n".join(lines)
         while len(result) > max_tokens * 4:
@@ -405,7 +409,11 @@ def main():
             print(f"[{m.layer[:1].upper()}][{m.memory_id}] {m.content[:200]}")
 
     elif args.command == "context":
-        print(hp.context_injection(args.topic))
+        result = hp.context_injection(args.topic)
+        try:
+            print(result)
+        except UnicodeEncodeError:
+            print(result.encode("ascii", errors="replace").decode("ascii"))
 
     elif args.command == "maintain":
         changes = hp.run_maintenance()
